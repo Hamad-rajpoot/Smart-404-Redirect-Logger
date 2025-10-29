@@ -62,40 +62,52 @@ class SFRL_Redirect {
 	 * @return string|false URL of the similar post/page if found, false otherwise.
 	 */
 	private function find_similar_post_url( $slug ) {
-		if ( empty( $slug ) ) {
-			return false;
-		}
-
-		$args = array(
-			'post_type'      => array( 'post', 'page' ),
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-		);
-
-		$posts = get_posts( $args );
-		$best_match = array(
-			'score' => 0,
-			'id'    => 0,
-		);
-
-		foreach ( $posts as $post_id ) {
-			$post_slug = basename( get_permalink( $post_id ) );
-			similar_text( $slug, $post_slug, $percent );
-
-			if ( $percent > $best_match['score'] ) {
-				$best_match = array(
-					'score' => $percent,
-					'id'    => $post_id,
-				);
-			}
-		}
-
-		// If similarity score is more than 70%, redirect to that page.
-		if ( $best_match['score'] > 70 ) {
-			return get_permalink( $best_match['id'] );
-		}
-
+	if ( empty( $slug ) ) {
 		return false;
 	}
+
+	$args = array(
+		'post_type'      => array( 'post', 'page' ),
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+	);
+
+	$posts = get_posts( $args );
+	$best_match = array(
+		'score' => 0,
+		'id'    => 0,
+	);
+
+	foreach ( $posts as $post_id ) {
+		$post_slug  = basename( get_permalink( $post_id ) );
+		$post_title = sanitize_title( get_the_title( $post_id ) );
+
+		// Compare missing slug with both slug and title
+		similar_text( $slug, $post_slug, $slug_percent );
+		similar_text( $slug, $post_title, $title_percent );
+
+		// Average both similarities
+		$overall_score = max( $slug_percent, $title_percent );
+
+	
+	
+
+		if ( $overall_score > $best_match['score'] ) {
+			$best_match = array(
+				'score' => $overall_score,
+				'id'    => $post_id,
+			);
+		}
+	}
+
+	
+
+	// Redirect if similarity > 70%
+	if ( $best_match['score'] > 60 ) {
+		return get_permalink( $best_match['id'] );
+	}
+
+	return false;
+}
 }

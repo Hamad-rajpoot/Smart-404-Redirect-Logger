@@ -17,11 +17,13 @@ class SFRL_Activator {
 	public static function activate() {
 		global $wpdb;
 
-		$table_name      = $wpdb->prefix . 'sfrl_404_logs';
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
 		$charset_collate = $wpdb->get_charset_collate();
 
-		// SQL to create table if it doesn't exist
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		// --- Table 1: 404 Logs ---
+		$logs_table = $wpdb->prefix . 'sfrl_404_logs';
+		$sql_logs = "CREATE TABLE IF NOT EXISTS $logs_table (
 			id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 			missing_url TEXT NOT NULL,
 			referrer TEXT NULL,
@@ -31,11 +33,26 @@ class SFRL_Activator {
 			PRIMARY KEY (id)
 		) $charset_collate;";
 
-		// Load dbDelta function
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta( $sql );
+		dbDelta( $sql_logs );
 
-		// Save plugin version in options (for future updates)
+		// --- Table 2: Manual Redirects ---
+		$redirects_table = $wpdb->prefix . 'sfrl_manual_redirects';
+		$sql_redirects = "CREATE TABLE IF NOT EXISTS $redirects_table (
+			id MEDIUMINT(9) NOT NULL AUTO_INCREMENT,
+			from_url VARCHAR(255) NOT NULL,
+			to_url VARCHAR(255) NOT NULL,
+			date_added DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+			PRIMARY KEY (id)
+		) $charset_collate;";
+
+		dbDelta( $sql_redirects );
+
+		// Save plugin version
 		add_option( 'sfrl_version', SFRL_VERSION );
+
+		// --- Schedule Daily Cleanup Cron Event ---
+		if ( ! wp_next_scheduled( 'sfrl_cleanup_old_logs' ) ) {
+			wp_schedule_event( time(), 'daily', 'sfrl_cleanup_old_logs' );
+		}
 	}
 }

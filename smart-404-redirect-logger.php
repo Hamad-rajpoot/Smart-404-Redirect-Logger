@@ -30,6 +30,8 @@ require_once SFRL_PLUGIN_DIR . 'includes/class-sfrl-activator.php';
 require_once SFRL_PLUGIN_DIR . 'includes/class-sfrl-logger.php';
 require_once SFRL_PLUGIN_DIR . 'includes/class-sfrl-redirect.php';
 require_once SFRL_PLUGIN_DIR . 'includes/class-sfrl-admin-page.php';
+require_once SFRL_PLUGIN_DIR . 'includes/class-sfrl-settings-page.php';
+require_once SFRL_PLUGIN_DIR . 'includes/class-sfrl-redirect-manager.php';
 
 /**
  * Activation hook - create custom table
@@ -44,7 +46,11 @@ function sfrl_init_plugin() {
 	// Initialize core classes
 	new SFRL_Logger();
 	new SFRL_Redirect();
-	//new SFRL_Admin_Page();
+	new SFRL_Admin_Page();
+	new SFRL_Settings_Page();
+	new SFRL_Redirect_Manager();
+	
 }
 add_action( 'plugins_loaded', 'sfrl_init_plugin' );
+
 
