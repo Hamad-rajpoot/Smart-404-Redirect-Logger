@@ -1,0 +1,61 @@
+/*
+ * Smart 404 Redirect Logger - Admin Styles
+ * Author: Hamad
+ */
+
+/* Main Wrapper */
+.sfrl-admin-wrap {
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+/* Section Headings */
+.sfrl-section-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Table Styling */
+.sfrl-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: #fff;
+}
+
+.sfrl-table th, .sfrl-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.sfrl-table th {
+    background: #f5f5f5;
+    font-weight: 600;
+}
+
+/* Buttons */
+.sfrl-btn {
+    background: #2271b1;
+    color: #fff;
+    padding: 8px 18px;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.sfrl-btn:hover {
+    background: #135e96;
+}
+
+/* Form Fields */
+.sfrl-input {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-top: 6px;
+}
